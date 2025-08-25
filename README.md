@@ -23,19 +23,6 @@ The Constitution AI Agent Frontend is a modern, responsive web application built
 - **Source Attribution**: Direct links to constitutional sections
 - **Context-Aware Responses**: Detailed legal analysis with citations
 
-### 🎨 Modern UI/UX
-- **Glassmorphism Design**: Modern glass-effect styling
-- **Smooth Animations**: Framer Motion powered interactions
-- **Responsive Layout**: Mobile-first responsive design
-- **Dark Theme**: Professional dark mode interface
-- **Interactive Elements**: Engaging hover effects and transitions
-
-### 🚀 Performance
-- **Real-time Updates**: Server-sent events for live progress
-- **Optimized Rendering**: Next.js 14 with App Router
-- **Fast Loading**: Optimized bundle and lazy loading
-- **Error Handling**: Comprehensive error states and recovery
-
 ## 🛠️ Technology Stack
 
 | Component | Technology | Purpose |
@@ -127,98 +114,6 @@ The main component that handles:
 - Query interface and results display
 - Progress tracking and error handling
 
-### Key Features Implementation
-```typescript
-// PDF processing with progress tracking
-const extractTextFromPDF = async (file: File) => {
-  const text = await pdfToText(file)
-  await processConstitution(text)
-}
-
-// Real-time query processing
-const handleQuery = async () => {
-  const response = await fetch('/query', {
-    method: 'POST',
-    body: JSON.stringify({ query })
-  })
-  const result = await response.json()
-  setQueryResult(result)
-}
-```
-
-## 🎨 Design System
-
-### Color Palette
-```css
-/* Primary Colors */
---blue-primary: #3B82F6
---cyan-accent: #06B6D4
---background: #0F172A
-
-/* Gradients */
---gradient-primary: linear-gradient(to right, #3B82F6, #06B6D4)
---gradient-background: linear-gradient(to bottom right, #1E293B, #1E40AF, #000000)
-```
-
-### Animation System
-- **Framer Motion** for component animations
-- **CSS Transitions** for hover effects
-- **Loading States** with custom spinners
-- **Progressive Enhancement** for smooth interactions
-
-## 📱 Responsive Design
-
-### Breakpoints
-```javascript
-// Tailwind CSS breakpoints
-sm: '640px',   // Mobile landscape
-md: '768px',   // Tablet
-lg: '1024px',  // Desktop
-xl: '1280px',  // Large desktop
-```
-
-### Mobile Optimizations
-- Touch-friendly interface
-- Optimized PDF upload for mobile
-- Responsive typography scaling
-- Mobile-first layout approach
-
-## 🔄 API Integration
-
-### Document Processing
-```typescript
-// Streaming response handling
-const processConstitution = async (text: string) => {
-  const response = await fetch('/process', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      constitutionText: text,
-      strategy: 'ai'
-    })
-  })
-
-  // Handle server-sent events for progress
-  const reader = response.body.getReader()
-  // ... streaming implementation
-}
-```
-
-### Query Processing
-```typescript
-interface QueryResult {
-  success: boolean
-  query: string
-  response: string
-  relevantSections: Array<{
-    text: string
-    similarity: number
-    article_section: string
-    chunk_type: string
-  }>
-}
-```
-
 ## 🚀 Deployment
 
 ### Vercel Deployment (Recommended)
@@ -284,12 +179,6 @@ NEXT_PUBLIC_API_BASE_URL=https://constitution-ai-agent-backend.onrender.com
   }
 }
 ```
-
-### Development Dependencies
-- **TypeScript**: Type checking
-- **ESLint**: Code linting
-- **Prettier**: Code formatting
-- **Husky**: Git hooks
 
 ## 📈 Analytics & Monitoring
 
