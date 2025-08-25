@@ -22,18 +22,18 @@ type AppStatus = 'loading' | 'ready' | 'needs_upload' | 'error';
 export default function ConstitutionAssistant() {
   // Main application state
   const [appStatus, setAppStatus] = useState<AppStatus>('loading');
-  
+
   // PDF processing state
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [processingProgress, setProcessingProgress] = useState<number>(0);
   const [processingStage, setProcessingStage] = useState<string>('');
-  
+
   // Querying state
   const [query, setQuery] = useState<string>('');
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
   const [isQuerying, setIsQuerying] = useState<boolean>(false);
-  
+
   // General UI state
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -97,7 +97,7 @@ export default function ConstitutionAssistant() {
       });
 
       if (!response.body) throw new Error("Server returned an empty response.");
-      
+
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let finalResult = null;
@@ -131,11 +131,15 @@ export default function ConstitutionAssistant() {
       } else {
         throw new Error('Processing failed without a specific error message.');
       }
-    } catch (err: any) {
-      setError(err.message || 'An unknown error occurred during processing.');
+    } catch (err: unknown) {
+      let errorMessage = 'An unknown error occurred during processing.';
+      if (err instanceof Error) {
+        errorMessage = err.message; // Safely access the message property
+      }
+      setError(errorMessage);
       setProcessingProgress(0);
       setProcessingStage('Processing Failed');
-      setAppStatus('needs_upload'); // Revert to needing an upload on failure
+      setAppStatus('needs_upload');
     } finally {
       setIsProcessing(false);
     }
@@ -157,9 +161,9 @@ export default function ConstitutionAssistant() {
       if (!result.success) {
         setError(result.response || "Failed to get a valid response.");
       }
-    } catch (err) {
-      setError('Failed to process query. The server might be down.');
-    } finally {
+    } catch (_err) { 
+  setError('Failed to process query. The server might be down.');
+} finally {
       setIsQuerying(false);
     }
   };
@@ -173,7 +177,7 @@ export default function ConstitutionAssistant() {
 
   // Helper to get dynamic subtitle based on app status
   const getSubtitle = () => {
-    switch(appStatus) {
+    switch (appStatus) {
       case 'loading': return 'Connecting to the legal database...';
       case 'ready': return 'The database is ready. Ask a legal question about the Constitution of India.';
       case 'needs_upload': return 'To begin, please upload the Constitution of India PDF.';
@@ -206,7 +210,7 @@ export default function ConstitutionAssistant() {
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">{getSubtitle()}</p>
         </motion.div>
-        
+
         {/* Main Content */}
         <div className="max-w-4xl mx-auto">
           <AnimatePresence mode="wait">
@@ -226,8 +230,8 @@ export default function ConstitutionAssistant() {
                 {/* Section 1: Upload */}
                 <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-2xl">
                   <h2 className="text-2xl font-semibold mb-6 text-center text-blue-400 flex items-center justify-center gap-3">
-                    {appStatus === 'ready' ? 
-                      <span className="text-green-400">✅</span> : 
+                    {appStatus === 'ready' ?
+                      <span className="text-green-400">✅</span> :
                       <span className="text-yellow-400">1.</span>
                     }
                     {appStatus === 'ready' ? 'Database is Loaded' : 'Upload Constitution of India PDF'}
@@ -243,7 +247,7 @@ export default function ConstitutionAssistant() {
                     <p className="text-xl mb-2">{pdfFile ? pdfFile.name : 'Click to upload PDF'}</p>
                     <p className="text-gray-400">{appStatus === 'ready' ? 'Upload a new file to replace existing data.' : 'Only the Constitution of India is accepted (Max 50MB).'}</p>
                   </motion.div>
-                  
+
                   <AnimatePresence>
                     {(isProcessing || (processingProgress > 0 && processingProgress < 100)) && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mt-6">
@@ -261,7 +265,7 @@ export default function ConstitutionAssistant() {
                     )}
                   </AnimatePresence>
                 </div>
-                
+
                 {/* Section 2: Query */}
                 <div className={`bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-2xl transition-opacity duration-500 ${appStatus !== 'ready' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                   <h2 className="text-2xl font-semibold mb-6 text-center text-blue-400">
@@ -288,7 +292,7 @@ export default function ConstitutionAssistant() {
                           <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           Thinking...
                         </div>
-                      ) : ( '🚀 Ask AI' )}
+                      ) : ('🚀 Ask AI')}
                     </motion.button>
                   </div>
                   <div className="text-center text-xs text-yellow-400/80 bg-yellow-900/30 p-3 rounded-lg border border-yellow-700/50">
@@ -342,41 +346,41 @@ export default function ConstitutionAssistant() {
 
         {/* Feature Cards */}
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="max-w-6xl mx-auto mt-16 grid md:grid-cols-3 gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="max-w-6xl mx-auto mt-16 grid md:grid-cols-3 gap-6"
         >
-            {[
-                { icon: '🧠', title: 'AI-Powered Analysis', description: 'Advanced vector embeddings and semantic search for precise legal information retrieval' },
-                { icon: '⚡', title: 'Real-time Processing', description: 'Lightning-fast document processing with intelligent chunking strategies' },
-                { icon: '🎯', title: 'Contextual Accuracy', description: 'Highly relevant results with similarity scoring and source attribution' }
-            ].map((feature, index) => (
-                <motion.div
-                    key={index}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    className="bg-gray-800/30 backdrop-blur-xl border border-gray-700/50 rounded-xl p-6 text-center"
-                >
-                    <div className="text-4xl mb-4">{feature.icon}</div>
-                    <h3 className="text-xl font-semibold mb-3 text-blue-400">{feature.title}</h3>
-                    <p className="text-gray-300 text-sm">{feature.description}</p>
-                </motion.div>
-            ))}
+          {[
+            { icon: '🧠', title: 'AI-Powered Analysis', description: 'Advanced vector embeddings and semantic search for precise legal information retrieval' },
+            { icon: '⚡', title: 'Real-time Processing', description: 'Lightning-fast document processing with intelligent chunking strategies' },
+            { icon: '🎯', title: 'Contextual Accuracy', description: 'Highly relevant results with similarity scoring and source attribution' }
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-gray-800/30 backdrop-blur-xl border border-gray-700/50 rounded-xl p-6 text-center"
+            >
+              <div className="text-4xl mb-4">{feature.icon}</div>
+              <h3 className="text-xl font-semibold mb-3 text-blue-400">{feature.title}</h3>
+              <p className="text-gray-300 text-sm">{feature.description}</p>
+            </motion.div>
+          ))}
         </motion.div>
 
         {/* Footer */}
         <motion.footer
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="text-center mt-16 pb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center mt-16 pb-8"
         >
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800/30 backdrop-blur-xl border border-gray-700/50 rounded-full">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm text-gray-300">
-                    Powered by AI • Vector Embeddings • Constitutional Law
-                </span>
-            </div>
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800/30 backdrop-blur-xl border border-gray-700/50 rounded-full">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-sm text-gray-300">
+              Powered by AI • Vector Embeddings • Constitutional Law
+            </span>
+          </div>
         </motion.footer>
       </div>
     </div>
