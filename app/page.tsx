@@ -51,7 +51,7 @@ export default function ConstitutionAssistant() {
           console.log("Database is empty. PDF upload required.");
           setAppStatus('needs_upload');
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Failed to fetch DB stats:", err);
         setError("Could not connect to the backend. Please refresh the page.");
         setAppStatus('error');
@@ -79,7 +79,7 @@ export default function ConstitutionAssistant() {
     try {
       const text = await pdfToText(file);
       await processConstitution(text);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error extracting PDF:', err);
       setError('Failed to extract text from PDF. Please try another file.');
       setIsProcessing(false);
@@ -161,9 +161,9 @@ export default function ConstitutionAssistant() {
       if (!result.success) {
         setError(result.response || "Failed to get a valid response.");
       }
-    } catch (_err) { 
-  setError('Failed to process query. The server might be down.');
-} finally {
+    } catch (err: unknown) {
+      setError('Failed to process query. The server might be down.');
+    } finally {
       setIsQuerying(false);
     }
   };
