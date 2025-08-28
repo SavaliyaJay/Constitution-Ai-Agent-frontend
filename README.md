@@ -1,7 +1,10 @@
 # Constitution AI Agent - Frontend
 
-<img width="3454" height="1873" alt="image" src="https://github.com/user-attachments/assets/95ab9cb8-8703-4370-b8b4-03ec17f60f2a" />
+## 🚀 Demo
+https://github.com/user-attachments/assets/e38c73cd-d07f-4802-9030-36c019774ba6
 
+## 🏗️ Architecture
+<img width="100%" alt="System Architecture" src="https://github.com/user-attachments/assets/95ab9cb8-8703-4370-b8b4-03ec17f60f2a" />
 
 ## 🚀 Overview
 
